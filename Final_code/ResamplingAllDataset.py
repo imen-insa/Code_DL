@@ -10,7 +10,8 @@ import os
 import numpy as np
 import pandas as pd
 from Other_Utililies import *
-#from neurokit2.signal.signal_resample
+#install neurokit2 : pip install neurokit2
+import neurokit2 as nk  
 from resampleSignal import * 
 
 #%%#
@@ -98,4 +99,24 @@ result=sample_dataset(data2,250,100)
                 
 result.to_csv('./data_resampled/Motion_Sens_dataset.csv', index = None)                       
    
-    
+#%%# wisdm watch dataset 20 Hz
+
+data_path2 ="./Final_data/Wisdm_dataset_watch.csv"
+data2=read_data(data_path2)
+
+
+result=sample_dataset(data2,20,100)
+                
+result.to_csv('./data_resampled/Wisdm_dataset_watch.csv', index = None) 
+
+
+#%%# wisdm phone dataset 20 Hz
+
+
+data_path2 ="./Final_data/Wisdm_dataset_phone.csv"
+data2=read_data(data_path2)
+
+
+result=sample_dataset(data2,20,100)
+                
+result.to_csv('./data_resampled/Wisdm_dataset_phone.csv', index = None)     
