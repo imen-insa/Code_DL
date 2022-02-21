@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jan 19 13:44:26 2022
+
+@author: trabelsi
+"""
+
+
+
+import os 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+
+def create_confusion_matrix(dataset,y_pred, y_test):    
+    #calculate the confusion matrix
+   
+    LABEL_NAMES=name_classes(dataset)
+      
+    confmat = confusion_matrix(y_true=y_test, y_pred=y_pred)
+    
+    fig, ax = plt.subplots(figsize=(7,7))
+    ax.imshow(confmat, cmap=plt.cm.Blues, alpha=0.5)
+
+    n_labels = len(LABEL_NAMES)
+    ax.set_xticks(np.arange(n_labels))
+    ax.set_yticks(np.arange(n_labels))
+    ax.set_xticklabels(LABEL_NAMES)
+    ax.set_yticklabels(LABEL_NAMES)
+
+    # rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    # loop over data dimensions and create text annotations.
+    for i in range(confmat.shape[0]):
+        for j in range(confmat.shape[1]):
+            ax.text(x=i, y=j, s=confmat[i, j], va='center', ha='center')
+    
+    # avoid that the first and last row cut in half
+    bottom, top = ax.get_ylim()
+    ax.set_ylim(bottom + 0.5, top - 0.5)
+    
+    ax.set_title("Confusion Matrix")
+    ax.set_xlabel('Predicted Label')
+    ax.set_ylabel('True Label')
+
+    plt.tight_layout()
+    plt.show()
+    
+    
+    
+    
+    
+    
+def split_indices_per_label(y):
+     indicies_per_label = [[] for x in range(0,6)]
+     # loop over the six labels
+     for i in range(6): 
+         indicies_per_label[i] = np.where(y == i)[0]
+     return indicies_per_label
+    
+
+ 
+
+def number_classes_array(train):
+    nb_classes=len(np.unique(train))
+    return nb_classes
+
+
+def number_classes_df(dataset):
+    nb_classes=dataset['Activity'].value_counts()
+    return nb_classes
+    
+def name_classes(dataset):
+    names=dataset['Categorie'].value_counts().index.tolist()
+    return names
+
+
+def number_classes_df_path(path):
+    
+    dataset = pd.read_csv (path)   
+    nb_classes=dataset['Activity'].value_counts()
+    return nb_classes
+
+def read_data(path):   
+    
+   with open(path, 'r') as f: data = pd.read_csv(f)
+   return data
+
+# arrange data in ascending order of user and timestamp
+#df = df.sort_values(by = ['user', 'timestamp'], ignore_index=True)    
+    
