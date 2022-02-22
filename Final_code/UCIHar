@@ -1,0 +1,182 @@
+
+
+"UCI HAR Dataset: The experiments have been carried out with a group of 30 
+"volunteers within an age bracket of 19-48 years. 
+"Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, 
+                                     " STANDING, LAYING) wearing a smartphone 
+"on the waist. Using its embedded accelerometer 
+"and gyroscope, we captured 3-axial linear acceleration and 3-axial 
+"angular velocity at a constant rate of 50Hz. The experiments have 
+"been video-recorded to label the data manually."
+
+ "
+#%%#
+import numpy as np 
+import pandas as pd 
+import os
+import seaborn as sns
+from skimage.transform import resize
+
+
+import pywt
+import matplotlib.pyplot as plt
+
+def load_y_data(y_path):
+    y = np.loadtxt(y_path, dtype=np.int32).reshape(-1,1)
+    # change labels range from 1-6 t 0-5, this enables a sparse_categorical_crossentropy loss function
+    return y - 1
+
+def load_X_data(X_path):
+    X_signal_paths = [X_path + file for file in os.listdir(X_path)]
+    X_signals = [np.loadtxt(path, dtype=np.float32) for path in X_signal_paths]
+    return np.transpose(np.array(X_signals), (1, 2, 0))
+
+
+
+
+
+
+
+
+#%%#
+PATH = './data/UCI HAR Dataset/'
+LABEL_NAMES = ["Walking", "Walking upstairs", "Walking downstairs", "Sitting", "Standing", "Laying"]
+
+# load X data
+X_train = load_X_data(PATH + 'train/Inertial Signals/')
+X_test = load_X_data(PATH + 'test/Inertial Signals/')
+#%%# rearrange datasets: from 3d to 2 D
+from einops import rearrange, reduce, repeat
+# start with (2947, 128, 9) to (2947*128, 9):
+X_test=rearrange(X_test,'h w i -> (h w) i')
+
+# or we could concatenate along horizontal axis to get (1024, 64 * 100):
+X_train=rearrange(X_train,'h w i -> (h w) i')
+
+#%%#
+# load y label activities
+label_train = load_y_data(PATH + 'train/y_train.txt')
+label_test = load_y_data(PATH + 'test/y_test.txt')
+
+
+y_train=np.array([])
+for i in range(len(label_train)):
+    r=np.ones(128)*label_train[i]
+  
+    y_train= np.append(y_train, r)
+    
+
+
+
+
+
+
+y_test=np.array([])
+for i in range(len(label_test)):
+    r=np.ones(128)*label_test[i]
+  
+    y_test= np.append(y_test, r)
+
+y_train=np.reshape(y_train, (len(y_train), 1))    
+y_test=np.reshape(y_test, (len(y_test), 1))  
+
+
+#%%#
+
+
+
+# load y label subjects
+sub_train = load_y_data(PATH + 'train/subject_train.txt')
+sub_test = load_y_data(PATH + 'test/subject_test.txt')
+
+
+subject_train=np.array([])
+for i in range(len(sub_train)):
+    r=np.ones(128)*sub_train[i]
+  
+    subject_train= np.append(subject_train, r)
+    
+
+subject_test=np.array([])
+for i in range(len(sub_test)):
+    r=np.ones(128)*sub_test[i]
+  
+    subject_test= np.append(subject_test, r)
+
+subject_train=np.reshape(subject_train, (len(subject_train), 1))    
+subject_test=np.reshape(subject_test, (len(subject_test), 1))  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#%%#
+X_all = np.concatenate([X_train, X_test])
+y_all=np.concatenate([y_train, y_test])
+sub_all=np.concatenate([subject_train,subject_test])
+
+dataset=np.concatenate((sub_all,y_all,X_all),axis=1)
+
+#%%##%%# dataset without total acc
+
+dataset1=dataset[: ,: -3]
+df = pd.DataFrame(data=dataset1,columns=['User','Activity', 'Acc-x', 
+                  'Acc-y','Acc-z','Gyr-x', 'Gyr-y','Gyr-z'])
+
+
+
+
+
+#%% categorical row label for activities
+
+
+
+
+
+
+
+
+df1=df.assign(Categories=pd.cut(df['Activity'], 6,
+                               
+                               labels=['WALKING',
+                                 'WALKING_UPSTAIRS',
+                                 'WALKING_DOWNSTAIRS',
+                                 'SITTING',
+                                 'STANDING',
+                                ' LAYING']))
+
+df1= pd.DataFrame(data=df1, columns=['User','Activity', 'Categories','Acc-x', 
+                  'Acc-y','Acc-z','Gyr-x', 'Gyr-y','Gyr-z'])
+#%% 
+
+
+
+
+df1['Categories'].value_counts().sort_index()
+
+
+df1['Activity'].value_counts().sort_index()
+
+
+
+
+df1.to_csv('./data/UCI HAR Dataset/UCI_Har_dataset.csv', index = None)
+
+
+
+
+
+
+
+
+
