@@ -36,8 +36,7 @@ def load_model_Ranao():
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-    loaded_model.load_weights("my_modelRanao_weights.h5")
+
     return loaded_model
 
 
@@ -47,8 +46,7 @@ def load_model_Ignatov():
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-    loaded_model.load_weights("my_modelIgnatov_weights.h5")
+
     return loaded_model
 
 #%%# 
@@ -57,8 +55,6 @@ def load_model_Ordonez():
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-    loaded_model.load_weights("my_modelOrdonez_weights.h5")
     return loaded_model
 
   #%%# 
