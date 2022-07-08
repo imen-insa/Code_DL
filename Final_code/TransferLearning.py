@@ -58,6 +58,21 @@ def load_model_Ordonez():
     return loaded_model
 
   #%%# 
+#%%# load models
+# load Ronao model (on 28 activties from all datasets except UCI Har)
+def load_model_all_Ranao():
+    json_file = open('modelRanaoAll_json.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+# load weights into new model
+    #loaded_model.load_weights("my_modelRanao_weights.h5")
+    return loaded_model
+  
+   
+    
+    
+    
 def load_data(dataset_name):
     if dataset_name=="uci":
         DATA_DIR = os.path.join(PAR_DIR, "data_resampled")
