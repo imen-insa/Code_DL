@@ -315,7 +315,22 @@ def prepare_data_windows1(trainX,testX,trainlabel,testlabel,traindatasetlabel,te
    
    return trainX,testX,trainy,testy,traindatasetlabel,testdatasetlabel
 
+#%%#
 
+def prepare_data_without_split(path):   
+    
+   with open(path, 'r') as f: data = pd.read_csv(f)
+   index_with_nan = data.index[data.isnull().any(axis=1)]
+   data.drop(index_with_nan,0, inplace=True)
+   
+   trainX=data[['Acc-x','Acc-y','Acc-z','Gyr-x', 'Gyr-y','Gyr-z']]
+
+
+   trainlabel=data[['Label_act']]
+   
+   traindatasetlabel=data[['Dataset']]
+
+   return trainX,trainlabel,traindatasetlabel
 
 #%%#
 # standardize data
